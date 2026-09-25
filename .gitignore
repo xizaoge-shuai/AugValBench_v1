@@ -1,52 +1,37 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
 .pytest_cache/
 .mypy_cache/
-
-# Conda / virtual environments
-.venv/
-venv/
-env/
 
 # IDE
 .vscode/
 .idea/
 
-# OS
-.DS_Store
-Thumbs.db
+# Generated data/results
+data/
+results/
+results*/
+archive/
 
 # Logs
+logs/
 *.log
-*.out
 nohup.out
 
-# Generated datasets
-data/
-
-# Generated experiment outputs
-results/
-
-# Hugging Face / model caches
+# Model/cache
 cache/
 .cache/
 hf_cache/
 huggingface/
-
-# Model checkpoints / weights
 *.pt
 *.pth
 *.ckpt
 *.bin
 *.safetensors
 
-# Jupyter
-.ipynb_checkpoints/
-
-# Temporary files
+# OS/temp
+.DS_Store
+Thumbs.db
 *.tmp
-*.temp
 *~

@@ -14,10 +14,8 @@ class BinaryLLMScorer:
             config.MODEL_NAME,
             trust_remote_code=True,
         )
-
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-
         self.tokenizer.padding_side = "left"
 
         quant = None
@@ -41,7 +39,6 @@ class BinaryLLMScorer:
         self.tok0 = self._single_token_id(["0", " 0"])
         self.tok1 = self._single_token_id(["1", " 1"])
         self.tok2 = self._single_token_id(["2", " 2"])
-
         print("label ids:", self.tok0, self.tok1, self.tok2)
 
     def _single_token_id(self, variants):
@@ -62,7 +59,6 @@ class BinaryLLMScorer:
             },
             {"role": "user", "content": user_text},
         ]
-
         return self.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -78,41 +74,27 @@ class BinaryLLMScorer:
             truncation=True,
             max_length=config.MAX_PROMPT_TOKENS,
         )
-
         device = next(self.model.parameters()).device
         enc = {k: v.to(device) for k, v in enc.items()}
-
         out = self.model(**enc)
         return out.logits[:, -1, :].float()
 
     def prob_one_vs_zero(self, prompts: Sequence[str]) -> List[float]:
-        out = []
-
+        results = []
         for st in range(0, len(prompts), config.BATCH_SIZE):
             batch = prompts[st: st + config.BATCH_SIZE]
             logits = self._last_logits(batch)
             pair = logits[:, [self.tok0, self.tok1]]
             p = torch.softmax(pair, dim=-1)[:, 1]
-            out.extend(p.detach().cpu().tolist())
+            results.extend(p.detach().cpu().tolist())
+        return results
 
-        return out
-
-    def prob_correct_option(
-        self,
-        prompts: Sequence[str],
-        correct_options: Sequence[int],
-    ) -> List[float]:
-        out = []
-
+    def option1_minus_option2_margin(self, prompts: Sequence[str]) -> List[float]:
+        """Return logit('1') - logit('2') for each prompt."""
+        results = []
         for st in range(0, len(prompts), config.BATCH_SIZE):
             batch = prompts[st: st + config.BATCH_SIZE]
-            corr = correct_options[st: st + config.BATCH_SIZE]
-
             logits = self._last_logits(batch)
-            pair = logits[:, [self.tok1, self.tok2]]
-            p = torch.softmax(pair, dim=-1).detach().cpu()
-
-            for i, c in enumerate(corr):
-                out.append(float(p[i, 0 if int(c) == 1 else 1]))
-
-        return out
+            margin = logits[:, self.tok1] - logits[:, self.tok2]
+            results.extend(margin.detach().cpu().tolist())
+        return results
