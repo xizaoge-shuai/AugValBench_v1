@@ -1,0 +1,11 @@
+transformers>=4.48
+accelerate>=1.2
+bitsandbytes>=0.45
+datasets>=3.2
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+matplotlib>=3.9
+tqdm>=4.66
+pyarrow>=18
+sentencepiece>=0.2
