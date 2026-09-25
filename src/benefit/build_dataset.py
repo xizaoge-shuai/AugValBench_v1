@@ -13,39 +13,104 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def ranking_metrics(scores, labels):
-    scores = np.asarray(scores, dtype=float)
-    labels = np.asarray(labels, dtype=int)
+    """
+    Tie-aware expected ranking metrics.
 
-    target_indices = np.where(labels == 1)[0]
-
-    if len(target_indices) != 1:
-        raise ValueError("Each case must contain exactly one target.")
-
-    target_idx = int(target_indices[0])
-
-    order = np.argsort(-scores, kind="stable")
-    rank = int(np.where(order == target_idx)[0][0]) + 1
-
-    target_score = scores[target_idx]
-    neg_scores = scores[labels == 0]
-
-    wins = (target_score > neg_scores).astype(float)
-    ties = (target_score == neg_scores).astype(float)
-
-    pwr = float(np.mean(wins + 0.5 * ties))
-
-    margin = float(
-        target_score - np.mean(neg_scores)
+    If the target ties with other candidates, use the expected metric
+    under uniform random tie breaking instead of relying on row order.
+    """
+    scores = np.asarray(
+        scores,
+        dtype=float,
     )
 
-    ndcg = dcg_single_positive(
-        rank,
-        10,
+    labels = np.asarray(
+        labels,
+        dtype=int,
+    )
+
+    target_indices = np.where(
+        labels == 1
+    )[0]
+
+    if len(target_indices) != 1:
+        raise ValueError(
+            "Each case must contain exactly one target."
+        )
+
+    target_idx = int(
+        target_indices[0]
+    )
+
+    target_score = float(
+        scores[target_idx]
+    )
+
+    higher = int(
+        np.sum(
+            scores > target_score
+        )
+    )
+
+    tied_total = int(
+        np.sum(
+            scores == target_score
+        )
+    )
+
+    first_rank = higher + 1
+    last_rank = higher + tied_total
+
+    positions = np.arange(
+        first_rank,
+        last_rank + 1,
+        dtype=float,
+    )
+
+    expected_rank = float(
+        positions.mean()
+    )
+
+    ndcg_values = np.where(
+        positions <= 10,
+        1.0 / np.log2(
+            positions + 1.0
+        ),
+        0.0,
+    )
+
+    ndcg10 = float(
+        ndcg_values.mean()
+    )
+
+    neg_scores = scores[
+        labels == 0
+    ]
+
+    wins = (
+        target_score > neg_scores
+    ).astype(float)
+
+    ties = (
+        target_score == neg_scores
+    ).astype(float)
+
+    pwr = float(
+        np.mean(
+            wins + 0.5 * ties
+        )
+    )
+
+    margin = float(
+        target_score
+        - np.mean(
+            neg_scores
+        )
     )
 
     return {
-        "rank": rank,
-        "ndcg10": ndcg,
+        "rank": expected_rank,
+        "ndcg10": ndcg10,
         "pairwise_win_rate": pwr,
         "pairwise_margin": margin,
     }
