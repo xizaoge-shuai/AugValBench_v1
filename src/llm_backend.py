@@ -3,7 +3,7 @@ from typing import Sequence, List
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-import config
+from src import config
 
 
 class BinaryLLMScorer:
@@ -30,7 +30,7 @@ class BinaryLLMScorer:
         self.model = AutoModelForCausalLM.from_pretrained(
             config.MODEL_NAME,
             device_map="auto",
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             quantization_config=quant,
             trust_remote_code=True,
         )

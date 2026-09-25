@@ -27,9 +27,9 @@ import math
 import pandas as pd
 from tqdm import tqdm
 
-import config
-from llm_backend import BinaryLLMScorer
-from utils import read_jsonl
+from src import config
+from src.llm_backend import BinaryLLMScorer
+from src.utils import read_jsonl
 
 
 def title(meta, item_id):

@@ -14,8 +14,8 @@ import json
 import math
 import random
 
-import config
-from utils import read_jsonl, write_jsonl, set_seed
+from src import config
+from src.utils import read_jsonl, write_jsonl, set_seed
 
 
 def main():

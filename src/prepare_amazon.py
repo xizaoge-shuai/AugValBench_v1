@@ -5,8 +5,8 @@ import pandas as pd
 from datasets import load_dataset
 from tqdm import tqdm
 
-import config
-from utils import set_seed, safe_text, write_jsonl
+from src import config
+from src.utils import set_seed, safe_text, write_jsonl
 
 
 def iterative_kcore(df: pd.DataFrame) -> pd.DataFrame:

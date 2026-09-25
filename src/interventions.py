@@ -1,7 +1,7 @@
 import random
 from typing import Dict, Any
 
-from utils import safe_text
+from src.utils import safe_text
 
 
 def clean_text(m: Dict[str, Any]) -> str:

@@ -1,91 +1,0 @@
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-[1/5] Loading raw_review_All_Beauty ...
-before k-core: 494780
-after  k-core: 905
-[3/5] Loading raw_meta_All_Beauty ...
-  0%|          | 0/112590 [00:00<?, ?it/s]  3%|▎         | 3103/112590 [00:00<00:03, 31027.22it/s]  6%|▌         | 6444/112590 [00:00<00:03, 32426.37it/s]  9%|▊         | 9733/112590 [00:00<00:03, 32635.23it/s] 12%|█▏        | 13001/112590 [00:00<00:03, 32437.35it/s] 14%|█▍        | 16309/112590 [00:00<00:02, 32667.22it/s] 17%|█▋        | 19606/112590 [00:00<00:02, 32752.28it/s] 20%|██        | 22882/112590 [00:00<00:02, 32676.56it/s] 23%|██▎       | 26150/112590 [00:00<00:02, 32480.21it/s] 26%|██▌       | 29501/112590 [00:00<00:02, 32798.38it/s] 29%|██▉       | 32843/112590 [00:01<00:02, 32987.32it/s] 32%|███▏      | 36143/112590 [00:01<00:02, 32862.42it/s] 35%|███▌      | 39501/112590 [00:01<00:02, 33077.44it/s] 38%|███▊      | 42837/112590 [00:01<00:02, 33162.32it/s] 41%|████      | 46154/112590 [00:01<00:02, 32952.37it/s] 44%|████▍     | 49455/112590 [00:01<00:01, 32969.03it/s] 47%|████▋     | 52852/112590 [00:01<00:01, 33266.29it/s] 50%|████▉     | 56179/112590 [00:01<00:01, 33127.96it/s] 53%|█████▎    | 59642/112590 [00:01<00:01, 33575.05it/s] 56%|█████▌    | 63001/112590 [00:01<00:01, 33359.09it/s] 59%|█████▉    | 66437/112590 [00:02<00:01, 33656.94it/s] 62%|██████▏   | 69871/112590 [00:02<00:01, 33858.86it/s] 65%|██████▌   | 73258/112590 [00:02<00:01, 33506.93it/s] 68%|██████▊   | 76641/112590 [00:02<00:01, 33602.41it/s] 71%|███████   | 80003/112590 [00:02<00:00, 33139.05it/s] 74%|███████▍  | 83385/112590 [00:02<00:00, 33339.85it/s] 77%|███████▋  | 86887/112590 [00:02<00:00, 33838.11it/s] 80%|████████  | 90273/112590 [00:02<00:00, 33586.10it/s] 83%|████████▎ | 93684/112590 [00:02<00:00, 33739.50it/s] 86%|████████▌ | 97060/112590 [00:02<00:00, 33637.28it/s] 89%|████████▉ | 100474/112590 [00:03<00:00, 33785.41it/s] 92%|█████████▏| 103919/112590 [00:03<00:00, 33981.05it/s] 95%|█████████▌| 107318/112590 [00:03<00:00, 33892.18it/s] 98%|█████████▊| 110810/112590 [00:03<00:00, 34197.10it/s]100%|██████████| 112590/112590 [00:03<00:00, 33356.24it/s]
-Final eval cases: 20
-Metadata items: 146
-Saved to: /data/users/zhjia/AugValBench_v1/data
-Built 414 probes for 138 items.
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading: Qwen/Qwen2.5-3B-Instruct
-Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [10:03<10:03, 603.25s/it]Fetching 2 files: 100%|██████████| 2/2 [29:12<00:00, 924.21s/it]Fetching 2 files: 100%|██████████| 2/2 [29:12<00:00, 876.06s/it]
-Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<02:10,  3.31it/s]Loading weights:   1%|          | 3/434 [00:00<00:52,  8.17it/s]Loading weights:   3%|▎         | 15/434 [00:00<00:10, 40.74it/s]Loading weights:   6%|▌         | 27/434 [00:00<00:06, 62.12it/s]Loading weights:   9%|▉         | 40/434 [00:00<00:05, 78.55it/s]Loading weights:  12%|█▏        | 53/434 [00:00<00:04, 93.00it/s]Loading weights:  17%|█▋        | 75/434 [00:00<00:02, 128.77it/s]Loading weights:  21%|██▏       | 93/434 [00:01<00:02, 143.46it/s]Loading weights:  26%|██▌       | 112/434 [00:01<00:02, 156.77it/s]Loading weights:  30%|██▉       | 129/434 [00:01<00:02, 152.03it/s]Loading weights:  33%|███▎      | 145/434 [00:01<00:02, 144.32it/s]Loading weights:  37%|███▋      | 160/434 [00:01<00:02, 112.01it/s]Loading weights:  40%|███▉      | 173/434 [00:01<00:02, 106.42it/s]Loading weights:  43%|████▎     | 188/434 [00:01<00:02, 116.13it/s]Loading weights:  48%|████▊     | 207/434 [00:01<00:01, 128.47it/s]Loading weights:  51%|█████     | 221/434 [00:02<00:01, 126.86it/s]Loading weights:  54%|█████▍    | 236/434 [00:02<00:01, 131.53it/s]Loading weights:  58%|█████▊    | 250/434 [00:02<00:01, 133.16it/s]Loading weights:  61%|██████    | 264/434 [00:02<00:01, 130.60it/s]Loading weights:  64%|██████▍   | 278/434 [00:02<00:01, 126.40it/s]Loading weights:  67%|██████▋   | 291/434 [00:02<00:01, 117.09it/s]Loading weights:  70%|██████▉   | 303/434 [00:02<00:01, 115.59it/s]Loading weights:  73%|███████▎  | 315/434 [00:02<00:01, 111.94it/s]Loading weights:  75%|███████▌  | 327/434 [00:02<00:00, 112.45it/s]Loading weights:  78%|███████▊  | 339/434 [00:03<00:00, 109.34it/s]Loading weights:  81%|████████  | 351/434 [00:03<00:00, 109.59it/s]Loading weights:  84%|████████▍ | 364/434 [00:03<00:00, 107.74it/s]Loading weights:  87%|████████▋ | 376/434 [00:03<00:00, 110.94it/s]Loading weights:  89%|████████▉ | 388/434 [00:03<00:00, 112.83it/s]Loading weights:  92%|█████████▏| 401/434 [00:03<00:00, 110.87it/s]Loading weights:  95%|█████████▌| 413/434 [00:03<00:00, 110.19it/s]Loading weights:  98%|█████████▊| 425/434 [00:03<00:00, 110.39it/s]Loading weights: 100%|██████████| 434/434 [00:03<00:00, 110.91it/s]
-label ids: 15 16 17
-Build knowledge prompts:   0%|          | 0/414 [00:00<?, ?it/s]Build knowledge prompts: 100%|██████████| 414/414 [00:00<00:00, 36119.44it/s]
-           item_id  knowledge_score  probe_accuracy  n_probes  mean_co_count
-count          138     1.380000e+02      138.000000     138.0     138.000000
-unique         138              NaN             NaN       NaN            NaN
-top     B00O2FGBJS              NaN             NaN       NaN            NaN
-freq             1              NaN             NaN       NaN            NaN
-mean           NaN     4.887352e-01        0.487923       3.0       2.057971
-std            NaN     2.821559e-01        0.285240       0.0       0.373304
-min            NaN     3.646203e-07        0.000000       3.0       1.000000
-25%            NaN     3.332065e-01        0.333333       3.0       2.000000
-50%            NaN     5.229239e-01        0.500000       3.0       2.000000
-75%            NaN     6.666441e-01        0.666667       3.0       2.000000
-max            NaN     9.999945e-01        1.000000       3.0       3.333333
-Saved: /data/users/zhjia/AugValBench_v1/results/item_knowledge.csv
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
-Loading: Qwen/Qwen2.5-3B-Instruct
-Loading weights:   0%|          | 0/434 [00:00<?, ?it/s]Loading weights:   0%|          | 1/434 [00:00<00:51,  8.43it/s]Loading weights:   3%|▎         | 13/434 [00:00<00:06, 68.41it/s]Loading weights:   6%|▋         | 28/434 [00:00<00:03, 102.91it/s]Loading weights:  11%|█         | 47/434 [00:00<00:02, 136.08it/s]Loading weights:  14%|█▍        | 61/434 [00:04<00:39,  9.36it/s] Loading weights:  18%|█▊        | 77/434 [00:04<00:24, 14.35it/s]Loading weights:  23%|██▎       | 100/434 [00:04<00:13, 24.05it/s]Loading weights:  28%|██▊       | 121/434 [00:04<00:08, 35.23it/s]Loading weights:  32%|███▏      | 141/434 [00:04<00:06, 48.18it/s]Loading weights:  37%|███▋      | 161/434 [00:04<00:04, 62.96it/s]Loading weights:  42%|████▏     | 184/434 [00:05<00:03, 82.82it/s]Loading weights:  47%|████▋     | 203/434 [00:05<00:02, 98.43it/s]Loading weights:  51%|█████     | 222/434 [00:05<00:01, 110.86it/s]Loading weights:  56%|█████▌    | 243/434 [00:05<00:01, 128.09it/s]Loading weights:  61%|██████    | 265/434 [00:05<00:01, 147.71it/s]Loading weights:  66%|██████▌   | 285/434 [00:05<00:00, 158.32it/s]Loading weights:  70%|███████   | 305/434 [00:05<00:00, 161.92it/s]Loading weights:  76%|███████▌  | 328/434 [00:05<00:00, 176.03it/s]Loading weights:  81%|████████  | 351/434 [00:05<00:00, 187.43it/s]Loading weights:  86%|████████▌ | 372/434 [00:06<00:00, 191.22it/s]Loading weights:  91%|█████████ | 393/434 [00:06<00:00, 191.14it/s]Loading weights:  95%|█████████▌| 413/434 [00:06<00:00, 192.01it/s]Loading weights: 100%|██████████| 434/434 [00:06<00:00, 68.79it/s] 
-label ids: 15 16 17
-
-=== condition: base ===
-build/base:   0%|          | 0/20 [00:00<?, ?it/s]build/base: 100%|██████████| 20/20 [00:00<00:00, 1413.46it/s]
-
-=== condition: clean ===
-build/clean:   0%|          | 0/20 [00:00<?, ?it/s]build/clean: 100%|██████████| 20/20 [00:00<00:00, 2719.25it/s]
-
-=== condition: redundant ===
-build/redundant:   0%|          | 0/20 [00:00<?, ?it/s]build/redundant: 100%|██████████| 20/20 [00:00<00:00, 2521.75it/s]
-
-=== condition: partial ===
-build/partial:   0%|          | 0/20 [00:00<?, ?it/s]build/partial: 100%|██████████| 20/20 [00:00<00:00, 2518.65it/s]
-
-=== condition: irrelevant ===
-build/irrelevant:   0%|          | 0/20 [00:00<?, ?it/s]build/irrelevant: 100%|██████████| 20/20 [00:00<00:00, 1834.10it/s]
-
-=== condition: conflict ===
-build/conflict:   0%|          | 0/20 [00:00<?, ?it/s]build/conflict: 100%|██████████| 20/20 [00:00<00:00, 1810.89it/s]
-              ndcg10  hr10       mrr  target_rank
-condition                                        
-base        0.355683  0.60  0.308851         8.60
-clean       0.336381  0.55  0.302550         7.75
-conflict    0.336135  0.60  0.281684         8.40
-irrelevant  0.368318  0.55  0.344170         8.55
-partial     0.370608  0.60  0.326609         8.05
-redundant   0.364485  0.65  0.299748         8.40
-                         ndcg10  hr10       mrr  rank
-baseline                                             
-LowKnowledgeSelective  0.315638  0.50  0.295893  8.15
-NoAugment              0.355683  0.60  0.308851  8.60
-OracleUpperBound       0.489460  0.75  0.427677  5.65
-Random50               0.345717  0.65  0.276165  7.45
-TailSelective          0.382278  0.65  0.324962  7.15
-UniformClean           0.336381  0.55  0.302550  7.75
-
-knowledge threshold = 0.3379631399341937
-popularity threshold = 5.0
-
-=== condition summary ===
-    condition    ndcg10  delta_ndcg10  ...  helpful_rate  mean_target_score_gain   n
-0        base  0.355683      0.000000  ...           0.0                0.000000  20
-1       clean  0.336381     -0.019302  ...           0.2                0.125501  20
-2    conflict  0.336135     -0.019548  ...           0.2                0.004350  20
-3  irrelevant  0.368318      0.012635  ...           0.2                0.012528  20
-4     partial  0.370608      0.014925  ...           0.2                0.085758  20
-5   redundant  0.364485      0.008802  ...           0.2                0.136316  20
-
-[6 rows x 7 columns]
-
-=== core diagnostic ===
-Spearman(knowledge_score, delta_ndcg10): rho=0.1484, p=0.5567, n=18
-Spearman(knowledge_score, delta_target_score): rho=-0.0940, p=0.7108, n=18
-Clean harmful augmentation rate: 0.1000
-Clean helpful augmentation rate: 0.2000
-
-plots: /data/users/zhjia/AugValBench_v1/results/plots

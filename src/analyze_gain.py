@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import spearmanr
 
-import config
+from src import config
 
 
 def corr_line(name, x, y):

@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import config
-from interventions import augmentation_for
-from llm_backend import BinaryLLMScorer
-from utils import (
+from src import config
+from src.interventions import augmentation_for
+from src.llm_backend import BinaryLLMScorer
+from src.utils import (
     read_jsonl,
     dcg_single_positive,
     hit_single_positive,

@@ -4,8 +4,8 @@ import random
 import numpy as np
 import pandas as pd
 
-import config
-from utils import dcg_single_positive, hit_single_positive, mrr_single_positive
+from src import config
+from src.utils import dcg_single_positive, hit_single_positive, mrr_single_positive
 
 
 def load_popularity():
