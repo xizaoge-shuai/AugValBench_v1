@@ -1,219 +1,330 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from pathlib import Path
+from scipy.stats import spearmanr
 
-from sklearn.model_selection import GroupShuffleSplit
 from sklearn.ensemble import (
     RandomForestRegressor,
     GradientBoostingRegressor,
 )
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
     r2_score,
 )
-from sklearn.impute import SimpleImputer
+from sklearn.model_selection import GroupKFold
 from sklearn.pipeline import Pipeline
 
 from src import config
 
 
 OUT = config.RESULT_DIR / "utility"
+OUT.mkdir(parents=True, exist_ok=True)
+
+
+# ============================================================
+# 只能使用 augmentation 发生之前能够获得的特征
+# ============================================================
+
+FEATURES = [
+    # recommendation state
+    "base_score",
+    "base_rank_norm",
+    "base_score_z",
+    "base_top_gap",
+    "case_base_score_mean",
+    "case_base_score_std",
+
+    # user state
+    "history_len",
+    "history_pop_mean_log",
+    "history_pop_std_log",
+
+    # item state
+    "item_popularity_log",
+
+    # knowledge state
+    "knowledge_score",
+    "knowledge_missing",
+    "probe_accuracy",
+    "n_probes",
+    "mean_co_count",
+    "mean_association_score",
+    "mean_semantic_margin",
+    "mean_abs_position_bias",
+
+    # metadata availability / quality
+    "title_len",
+    "description_len",
+    "features_len",
+    "meta_total_len",
+    "category_present",
+    "store_present",
+]
+
+
+FORBIDDEN = {
+    "is_target",
+    "clean_score",
+    "benefit_label",
+    "utility_ndcg_if_aug",
+    "utility_pwr_if_aug",
+    "utility_margin_if_aug",
+}
+
+
+def regression_metrics(y, pred, subset):
+    y = np.asarray(y, dtype=float)
+    pred = np.asarray(pred, dtype=float)
+
+    mse = mean_squared_error(y, pred)
+    mae = mean_absolute_error(y, pred)
+
+    if len(y) >= 2:
+        r2 = r2_score(y, pred)
+    else:
+        r2 = np.nan
+
+    if len(y) >= 3 and np.std(y) > 0 and np.std(pred) > 0:
+        rho, p = spearmanr(y, pred)
+    else:
+        rho, p = np.nan, np.nan
+
+    return {
+        "subset": subset,
+        "n": len(y),
+        "mse": mse,
+        "mae": mae,
+        "r2": r2,
+        "spearman_rho": rho,
+        "spearman_p": p,
+    }
 
 
 def main():
 
-    OUT.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    df = pd.read_csv(
+    path = (
         config.RESULT_DIR
         / "benefit"
         / "benefit_dataset.csv"
     )
 
+    df = pd.read_csv(path)
 
-    target = (
+    available = [
+        x for x in FEATURES
+        if x in df.columns
+    ]
+
+    leaking = set(available) & FORBIDDEN
+
+    if leaking:
+        raise RuntimeError(
+            f"Feature leakage detected: {leaking}"
+        )
+
+    print("===== SAFE FEATURES =====")
+    print("feature count =", len(available))
+
+    for x in available:
+        print(x)
+
+    print("\n===== MISSING VALUES =====")
+
+    missing = (
+        df[available]
+        .isna()
+        .sum()
+    )
+
+    print(
+        missing[
+            missing > 0
+        ].to_string()
+    )
+
+    X = df[available].copy()
+
+    y = (
         df["utility_margin_if_aug"]
-        .fillna(0)
         .astype(float)
     )
 
-
-    drop_cols = [
-        "benefit_label",
-        "utility_ndcg_if_aug",
-        "utility_pwr_if_aug",
-        "utility_margin_if_aug",
-        "case_id",
-    ]
-
-
-    X = df.drop(
-        columns=[
-            c for c in drop_cols
-            if c in df.columns
-        ]
-    )
-
-
-    X = X.select_dtypes(
-        include=["number"]
-    )
-
-
     groups = df["case_id"]
 
-
-    splitter = GroupShuffleSplit(
-        test_size=0.2,
-        random_state=42,
+    cv = GroupKFold(
+        n_splits=5
     )
 
-
-    train_idx, test_idx = next(
-        splitter.split(
-            X,
-            target,
-            groups,
-        )
+    pred_rf = np.zeros(
+        len(df),
+        dtype=float,
     )
 
+    pred_gbr = np.zeros(
+        len(df),
+        dtype=float,
+    )
 
-    X_train = X.iloc[train_idx]
-    X_test = X.iloc[test_idx]
+    fold_ids = np.full(
+        len(df),
+        -1,
+        dtype=int,
+    )
 
-    y_train = target.iloc[train_idx]
-    y_test = target.iloc[test_idx]
-
-
-    models = {
-
-        "UtilityRF":
-        Pipeline(
-            [
-                (
-                    "imputer",
-                    SimpleImputer(
-                        strategy="median"
-                    )
-                ),
-                (
-                    "model",
-                    RandomForestRegressor(
-                        n_estimators=300,
-                        random_state=42,
-                        n_jobs=-1,
-                        min_samples_leaf=5,
-                    )
-                )
-            ]
-        ),
-
-
-        "UtilityGBR":
-        Pipeline(
-            [
-                (
-                    "imputer",
-                    SimpleImputer(
-                        strategy="median"
-                    )
-                ),
-                (
-                    "model",
-                    GradientBoostingRegressor(
-                        random_state=42,
-                        n_estimators=200,
-                        learning_rate=0.03,
-                        max_depth=3,
-                    )
-                )
-            ]
-        ),
-
-    }
-
-
-    metrics = []
-    preds = []
-
-
-    for name, model in models.items():
+    for fold, (train_idx, test_idx) in enumerate(
+        cv.split(X, y, groups)
+    ):
 
         print(
-            "training",
-            name
+            f"\n===== FOLD {fold + 1}/5 ====="
         )
 
-
-        model.fit(
-            X_train,
-            y_train,
+        print(
+            "train cases =",
+            df.iloc[train_idx]["case_id"].nunique()
         )
 
-
-        pred = model.predict(
-            X_test
+        print(
+            "test cases  =",
+            df.iloc[test_idx]["case_id"].nunique()
         )
 
+        rf = Pipeline([
+            (
+                "imputer",
+                SimpleImputer(
+                    strategy="median"
+                ),
+            ),
+            (
+                "model",
+                RandomForestRegressor(
+                    n_estimators=500,
+                    max_depth=12,
+                    min_samples_leaf=4,
+                    random_state=2027 + fold,
+                    n_jobs=-1,
+                ),
+            ),
+        ])
 
-        metrics.append(
-            {
-                "model": name,
-                "mse":
-                    mean_squared_error(
-                        y_test,
-                        pred,
-                    ),
-                "mae":
-                    mean_absolute_error(
-                        y_test,
-                        pred,
-                    ),
-                "r2":
-                    r2_score(
-                        y_test,
-                        pred,
-                    )
-            }
+        # Huber loss 对我们现在这种 heavy-tail utility
+        # 比普通 squared error 更稳。
+        gbr = Pipeline([
+            (
+                "imputer",
+                SimpleImputer(
+                    strategy="median"
+                ),
+            ),
+            (
+                "model",
+                GradientBoostingRegressor(
+                    loss="huber",
+                    n_estimators=300,
+                    learning_rate=0.03,
+                    max_depth=3,
+                    min_samples_leaf=4,
+                    random_state=2027 + fold,
+                ),
+            ),
+        ])
+
+        rf.fit(
+            X.iloc[train_idx],
+            y.iloc[train_idx],
         )
 
+        gbr.fit(
+            X.iloc[train_idx],
+            y.iloc[train_idx],
+        )
 
-        tmp = df.iloc[
-            test_idx
-        ].copy()
+        pred_rf[test_idx] = rf.predict(
+            X.iloc[test_idx]
+        )
 
-        tmp["pred_utility"] = pred
+        pred_gbr[test_idx] = gbr.predict(
+            X.iloc[test_idx]
+        )
 
-        tmp["model"] = name
+        fold_ids[test_idx] = fold
 
-        preds.append(tmp)
+    out = df.copy()
 
+    out["fold"] = fold_ids
+    out["pred_utility_rf"] = pred_rf
+    out["pred_utility_gbr"] = pred_gbr
 
-    pd.DataFrame(metrics).to_csv(
-        OUT /
-        "ranker_metrics.csv",
+    out.to_csv(
+        OUT / "ranker_predictions.csv",
         index=False,
     )
 
+    metric_rows = []
 
-    pd.concat(
-        preds,
-        ignore_index=True,
-    ).to_csv(
-        OUT /
-        "ranker_predictions.csv",
-        index=False,
+    for model_name, pred in [
+        ("UtilityRF", pred_rf),
+        ("UtilityGBR", pred_gbr),
+    ]:
+
+        row = {
+            "model": model_name,
+            **regression_metrics(
+                y,
+                pred,
+                "all",
+            ),
+        }
+
+        metric_rows.append(row)
+
+        target_mask = (
+            df["is_target"] == 1
+        ).to_numpy()
+
+        negative_mask = ~target_mask
+
+        metric_rows.append({
+            "model": model_name,
+            **regression_metrics(
+                y[target_mask],
+                pred[target_mask],
+                "target",
+            ),
+        })
+
+        metric_rows.append({
+            "model": model_name,
+            **regression_metrics(
+                y[negative_mask],
+                pred[negative_mask],
+                "negative",
+            ),
+        })
+
+    metrics = pd.DataFrame(
+        metric_rows
     )
 
+    metrics.to_csv(
+        OUT / "ranker_metrics.csv",
+        index=False,
+    )
 
     print(
-        pd.DataFrame(metrics)
-        .to_string(index=False)
+        "\n===== OOF REGRESSION METRICS ====="
+    )
+
+    print(
+        metrics.to_string(index=False)
+    )
+
+    print(
+        "\nSaved:",
+        OUT / "ranker_predictions.csv"
     )
 
 
