@@ -2,8 +2,19 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "data"
-RESULT_DIR = ROOT / "results"
+DATA_DIR = Path(os.environ.get("AUGVAL_DATA_DIR", str(ROOT / "data"))).expanduser().resolve()
+RESULT_DIR = Path(os.environ.get("AUGVAL_RESULT_DIR", str(ROOT / "results"))).expanduser().resolve()
+
+DATA_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+RESULT_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
 PLOT_DIR = RESULT_DIR / "plots"
 
 for p in [DATA_DIR, RESULT_DIR, PLOT_DIR]:
@@ -19,7 +30,7 @@ NEGATIVE_COUNT = 19
 MAX_HISTORY = 10
 RANDOM_SEED = 2027
 
-MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
+MODEL_NAME = os.environ.get("AUGVAL_MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct")
 LOAD_IN_4BIT = True
 BATCH_SIZE = 8
 MAX_PROMPT_TOKENS = 1024
