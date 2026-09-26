@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -8,7 +9,7 @@ PLOT_DIR = RESULT_DIR / "plots"
 for p in [DATA_DIR, RESULT_DIR, PLOT_DIR]:
     p.mkdir(parents=True, exist_ok=True)
 
-AMAZON_CATEGORY = "All_Beauty"
+AMAZON_CATEGORY = os.environ.get("AUGVAL_AMAZON_CATEGORY", "All_Beauty")
 POSITIVE_RATING = 4.0
 MIN_USER_INTERACTIONS = 3
 MIN_ITEM_INTERACTIONS = 3

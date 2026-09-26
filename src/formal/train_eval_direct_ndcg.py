@@ -20,7 +20,7 @@ from src.utility.evaluate_ranker import (
 
 OUT = (
     config.RESULT_DIR
-    / "formal_beauty"
+    / f"formal_{config.AMAZON_CATEGORY.lower()}"
 )
 
 OUT.mkdir(
