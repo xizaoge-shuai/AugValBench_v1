@@ -9,7 +9,7 @@ from src import config
 
 BASE = (
     config.RESULT_DIR
-    / f"formal_{config.AMAZON_CATEGORY.lower()}"
+    / f"formal_{config.DATASET_NAME.lower()}"
 )
 
 SELECTED_PATH = (

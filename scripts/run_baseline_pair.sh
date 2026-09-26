@@ -19,6 +19,7 @@ PY="$HOME/miniconda3/envs/rec/bin/python"
 cd "$ROOT"
 
 export AUGVAL_AMAZON_CATEGORY="$DATASET"
+export AUGVAL_DATASET_NAME="$DATASET"
 export AUGVAL_MODEL_NAME="$MODEL"
 export AUGVAL_DATA_DIR="$DATA_DIR"
 export AUGVAL_RESULT_DIR="$RESULT_DIR"

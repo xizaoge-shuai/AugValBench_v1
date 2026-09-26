@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -11,111 +10,103 @@ ROOT = (
 )
 
 
-RUNS = [
-    {
-        "dataset":
-            "All_Beauty",
+def discover_baseline_dirs():
 
-        "model":
-            "Qwen2.5-7B-Instruct",
+    candidates = []
 
-        "result":
-            ROOT
-            / "runs"
-            / "All_Beauty"
-            / "results",
-    },
+    # Existing 7B archived Amazon results.
+    candidates.extend(
+        ROOT.glob(
+            "runs/*/results/"
+            "baseline_*/"
+        )
+    )
 
-    {
-        "dataset":
-            "Gift_Cards",
+    # General cross-model runs.
+    candidates.extend(
+        ROOT.glob(
+            "baseline_runs/*/*/"
+            "baseline_*/"
+        )
+    )
 
-        "model":
-            "Qwen2.5-7B-Instruct",
+    unique = []
 
-        "result":
-            ROOT
-            / "runs"
-            / "Gift_Cards"
-            / "results",
-    },
+    seen = set()
 
-    {
-        "dataset":
-            "All_Beauty",
+    for p in candidates:
 
-        "model":
-            "Qwen2.5-3B-Instruct",
+        manifest = (
+            p
+            / "baseline_manifest.json"
+        )
 
-        "result":
-            ROOT
-            / "baseline_runs"
-            / "All_Beauty"
-            / "Qwen2.5-3B-Instruct",
-    },
+        summary = (
+            p
+            / "test_selected_summary.csv"
+        )
 
-    {
-        "dataset":
-            "Gift_Cards",
+        if (
+            manifest.exists()
+            and summary.exists()
+        ):
 
-        "model":
-            "Qwen2.5-3B-Instruct",
+            key = str(
+                p.resolve()
+            )
 
-        "result":
-            ROOT
-            / "baseline_runs"
-            / "Gift_Cards"
-            / "Qwen2.5-3B-Instruct",
-    },
-]
+            if key not in seen:
+                seen.add(key)
+                unique.append(p)
+
+    return sorted(
+        unique
+    )
 
 
 def main():
 
     rows = []
 
-    missing = []
+    dirs = (
+        discover_baseline_dirs()
+    )
 
-    for run in RUNS:
+    print(
+        "discovered runs =",
+        len(dirs)
+    )
 
-        dataset = run[
+    for baseline_dir in dirs:
+
+        import json
+
+        with (
+            baseline_dir
+            / "baseline_manifest.json"
+        ).open(
+            "r",
+            encoding="utf-8",
+        ) as f:
+
+            manifest = json.load(f)
+
+        dataset = manifest[
             "dataset"
         ]
 
-        model = run[
+        model = manifest[
             "model"
         ]
 
-        result = run[
-            "result"
-        ]
-
-        baseline_dir = (
-            result
-            / f"baseline_{dataset.lower()}"
-        )
-
-        summary_path = (
+        summary = pd.read_csv(
             baseline_dir
             / "test_selected_summary.csv"
         )
 
-        manifest_path = (
-            baseline_dir
-            / "baseline_manifest.json"
-        )
-
-        if not summary_path.exists():
-            missing.append(
-                str(summary_path)
-            )
-            continue
-
-        summary = pd.read_csv(
-            summary_path
-        )
-
-        for _, r in summary.iterrows():
+        for _, r in (
+            summary.iterrows()
+        ):
 
             rows.append({
                 "dataset":
@@ -151,6 +142,12 @@ def main():
 
                 "n":
                     r["n"],
+
+                "source":
+                    str(
+                        baseline_dir
+                        .relative_to(ROOT)
+                    ),
             })
 
     out = pd.DataFrame(
@@ -177,33 +174,41 @@ def main():
         "\n===== BASELINE MATRIX ====="
     )
 
-    if len(out):
-
+    if len(out) == 0:
         print(
-            out.sort_values(
-                [
-                    "dataset",
-                    "model",
-                    "ndcg10",
-                ],
-                ascending=[
-                    True,
-                    True,
-                    False,
-                ],
-            ).to_string(
-                index=False
-            )
+            "No completed runs."
         )
+        return
 
-    if missing:
-
-        print(
-            "\n===== NOT FINISHED ====="
+    print(
+        out.sort_values(
+            [
+                "dataset",
+                "model",
+                "ndcg10",
+            ],
+            ascending=[
+                True,
+                True,
+                False,
+            ],
+        )[
+            [
+                "dataset",
+                "model",
+                "router",
+                "budget",
+                "ndcg10",
+                "hr10",
+                "mrr",
+                "pairwise_win_rate",
+                "n",
+            ]
+        ]
+        .to_string(
+            index=False
         )
-
-        for x in missing:
-            print(x)
+    )
 
 
 if __name__ == "__main__":

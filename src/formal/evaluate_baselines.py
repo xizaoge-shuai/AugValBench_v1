@@ -21,7 +21,7 @@ from src.formal.train_eval_direct_ndcg import (
 
 OUT = (
     config.RESULT_DIR
-    / f"baseline_{config.AMAZON_CATEGORY.lower()}"
+    / f"baseline_{config.DATASET_NAME.lower()}"
 )
 
 OUT.mkdir(
@@ -135,7 +135,7 @@ def main():
 
     print(
         "dataset =",
-        config.AMAZON_CATEGORY
+        config.DATASET_NAME
     )
 
     print(
@@ -632,7 +632,7 @@ def main():
 
     manifest = {
         "dataset":
-            config.AMAZON_CATEGORY,
+            config.DATASET_NAME,
 
         "model":
             config.MODEL_NAME,

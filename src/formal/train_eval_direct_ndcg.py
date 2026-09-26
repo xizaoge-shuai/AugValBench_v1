@@ -20,7 +20,7 @@ from src.utility.evaluate_ranker import (
 
 OUT = (
     config.RESULT_DIR
-    / f"formal_{config.AMAZON_CATEGORY.lower()}"
+    / f"formal_{config.DATASET_NAME.lower()}"
 )
 
 OUT.mkdir(
