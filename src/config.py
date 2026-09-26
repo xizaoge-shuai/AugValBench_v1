@@ -36,11 +36,16 @@ LOAD_IN_4BIT = True
 BATCH_SIZE = 8
 MAX_PROMPT_TOKENS = 1024
 
-CONDITIONS = [
-    "base",
-    "clean",
-]
+_DEFAULT_CONDITIONS = "base,clean"
 
+CONDITIONS = [
+    x.strip()
+    for x in os.environ.get(
+        "AUGVAL_CONDITIONS",
+        _DEFAULT_CONDITIONS,
+    ).split(",")
+    if x.strip()
+]
 # Knowledge probing v2
 KNOWLEDGE_PROBES_PER_ITEM = 5
 MIN_COOCCURRENCE = 2
