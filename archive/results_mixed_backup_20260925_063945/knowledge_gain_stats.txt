@@ -1,0 +1,4 @@
+Spearman(knowledge_score, delta_ndcg10): rho=0.1484, p=0.5567, n=18
+Spearman(knowledge_score, delta_target_score): rho=-0.0940, p=0.7108, n=18
+Clean harmful augmentation rate: 0.1000
+Clean helpful augmentation rate: 0.2000

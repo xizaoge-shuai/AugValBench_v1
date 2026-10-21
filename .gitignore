@@ -37,3 +37,19 @@ Thumbs.db
 *~
 runs/
 snapshots/
+
+# AugValBench generated experiment artifacts
+/logs/
+/archives/
+/runs/
+/baseline_runs/
+/benchmark_runs/
+/cross_model_runs/
+/method_runs/
+/results/
+
+# Temporary outputs
+*.partial.csv
+__pycache__/
+.pytest_cache/
+.mypy_cache/

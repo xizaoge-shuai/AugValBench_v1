@@ -1,0 +1,16 @@
+{
+  "dataset": "All_Beauty",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "train_cases": 585,
+  "val_cases": 195,
+  "test_cases": 195,
+  "selected_budgets": {
+    "BenefitRF_NDCG": 0.1,
+    "BenefitRF_Margin": 0.15,
+    "Tail": 0.3,
+    "LowKnowledge": 0.1,
+    "Uncertainty": 0.15,
+    "OracleNDCG": 0.05,
+    "Random": 0.3
+  }
+}

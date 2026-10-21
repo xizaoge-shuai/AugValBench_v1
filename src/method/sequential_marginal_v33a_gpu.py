@@ -2707,6 +2707,8 @@ def main():
         make_regressor as make_risk_regressor,
         make_classifier as make_risk_classifier,
         positive_probability as risk_positive_probability,
+        evaluate_policy as risk_evaluate_policy,
+        summarize as risk_summarize,
         LAMBDAS as RISK_LAMBDAS,
     )
 
@@ -2852,6 +2854,10 @@ def main():
                 features
             )
 
+            # Performance-only cache.
+            # Does not alter any prediction or training target.
+            self._prediction_cache = {}
+
 
         def predict(
             self,
@@ -2863,6 +2869,26 @@ def main():
                     self.features
                 ]
             )
+
+            arr = np.ascontiguousarray(
+                X_base.to_numpy(
+                    dtype=float
+                )
+            )
+
+            key = (
+                arr.shape,
+                arr.tobytes(),
+            )
+
+            cached = (
+                self._prediction_cache.get(
+                    key
+                )
+            )
+
+            if cached is not None:
+                return cached.copy()
 
             mu = (
                 self.utility_model.predict(
@@ -2877,13 +2903,19 @@ def main():
                 )
             )
 
-            return (
+            pred = (
                 mu
                 -
                 self.lam
                 * harm_prob
                 * self.harm_scale
             )
+
+            self._prediction_cache[
+                key
+            ] = pred.copy()
+
+            return pred
 
 
     # ========================================================
@@ -2896,48 +2928,110 @@ def main():
     # - ties = lower actual cost, then lower lambda/budget
     # ========================================================
 
+    # ========================================================
+    # FAST VECTORIZED RISK SEARCH
+    #
+    # Equivalent to the original RiskUtility implementation:
+    # predict all validation rows ONCE, then sweep lambda/budget.
+    # ========================================================
+
+    print()
+    print(
+        "===== VECTORIZED RISK VALIDATION SEARCH ====="
+    )
+
+    risk_mu_val = (
+        risk_utility_model.predict(
+            X_risk_val
+        )
+    )
+
+    risk_harm_prob_val = (
+        risk_positive_probability(
+            risk_harm_model,
+            X_risk_val,
+        )
+    )
+
+    print(
+        "validation rows predicted once =",
+        len(
+            X_risk_val
+        )
+    )
+
+    print(
+        "lambda candidates =",
+        list(
+            RISK_LAMBDAS
+        )
+    )
+
+    print(
+        "budget candidates =",
+        list(
+            BUDGETS
+        )
+    )
+
     risk_search_rows = []
 
+    total_search = (
+        len(
+            RISK_LAMBDAS
+        )
+        *
+        len(
+            BUDGETS
+        )
+    )
+
+    search_index = 0
 
     for risk_lambda_candidate in (
         RISK_LAMBDAS
     ):
 
-        candidate_model = (
-            RiskBaseModel(
-                risk_utility_model,
-                risk_harm_model,
-                risk_harm_scale,
-                risk_lambda_candidate,
-                base_features,
+        risk_val = (
+            risk_mu_val
+            -
+            float(
+                risk_lambda_candidate
             )
+            * risk_harm_prob_val
+            * risk_harm_scale
         )
 
         for risk_budget_candidate in (
             BUDGETS
         ):
 
-            chooser = (
-                lambda case, b,
-                model=candidate_model:
-                    evaluate_static_case(
-                        case,
-                        model,
-                        base_features,
-                        b,
-                        True,
-                    )
+            search_index += 1
+
+            print(
+                f"risk search "
+                f"[{search_index}/{total_search}] "
+                f"lambda="
+                f"{float(risk_lambda_candidate):.4f} "
+                f"budget="
+                f"{float(risk_budget_candidate):.4f}",
+                flush=True,
             )
 
-            cases = evaluate_method(
-                val,
-                "RiskBaseSearch",
-                chooser,
-                risk_budget_candidate,
+            cases = (
+                risk_evaluate_policy(
+                    val,
+                    risk_val,
+                    risk_budget_candidate,
+                    "RiskBaseSearch",
+                    abstain=True,
+                )
             )
 
-            summary = summarize_cases(
-                cases
+            summary = (
+                risk_summarize(
+                    cases
+                )
             )
 
             risk_search_rows.append({
@@ -2965,7 +3059,6 @@ def main():
                         ]
                     ),
             })
-
 
     risk_search = pd.DataFrame(
         risk_search_rows

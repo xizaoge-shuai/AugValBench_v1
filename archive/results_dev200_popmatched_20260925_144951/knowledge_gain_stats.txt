@@ -1,0 +1,7 @@
+Spearman(knowledge_score, delta_ndcg10): rho=0.0951, p=0.3391, n=103
+Spearman(knowledge_score, delta_pairwise_win_rate): rho=0.0129, p=0.897, n=103
+Spearman(knowledge_score, delta_pairwise_margin): rho=-0.0338, p=0.7343, n=103
+Clean NDCG-harmful rate: 0.2100
+Clean NDCG-helpful rate: 0.2250
+Clean pairwise-harmful rate: 0.3850
+Clean pairwise-helpful rate: 0.3250

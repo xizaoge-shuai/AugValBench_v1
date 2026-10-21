@@ -295,15 +295,17 @@ def collate_cases(batch):
         features[
             b,
             :n,
-        ] = torch.from_numpy(
-            x
+        ] = torch.tensor(
+            x,
+            dtype=torch.float32,
         )
 
         targets[
             b,
             :n,
-        ] = torch.from_numpy(
-            y
+        ] = torch.tensor(
+            y,
+            dtype=torch.float32,
         )
 
         mask[
@@ -314,8 +316,9 @@ def collate_cases(batch):
         row_indices[
             b,
             :n,
-        ] = torch.from_numpy(
-            idx
+        ] = torch.tensor(
+            idx,
+            dtype=torch.long,
         )
 
         case_ids.append(

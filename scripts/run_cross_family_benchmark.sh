@@ -102,7 +102,7 @@ do
             AUGVAL_MODEL_NAME="$MODEL" \
             AUGVAL_DATA_DIR="$BENCH_DATA" \
             AUGVAL_RESULT_DIR="$SOURCE_RESULT" \
-            AUGVAL_CONDITIONS="clean" \
+            AUGVAL_CONDITIONS="base,clean" \
             "$PY" -u \
             -m src.run_rerank
 
